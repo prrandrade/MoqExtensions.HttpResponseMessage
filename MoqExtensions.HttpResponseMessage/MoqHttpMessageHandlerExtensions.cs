@@ -18,7 +18,8 @@
         /// </summary>
         /// <param name="mock">The Mock<![CDATA[<HttpMessageHandler>]]> used for mocking</param>
         /// <param name="action">Optionally this action will receive the original HttpRequestMessage</param>
-        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, Action<HttpRequestMessage> action = null)
+        /// <param name="verifiableDispose">True if the dispose method can be verified. Recommended if the HttpClient is called is a disposable manner.</param>
+        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)
         {
             mock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
@@ -26,9 +27,10 @@
                 .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK))
                 .Verifiable();
 
-            mock.Protected()
-                .Setup("Dispose", ItExpr.IsAny<bool>())
-                .Verifiable();
+            if (verifiableDispose)
+                mock.Protected()
+                    .Setup("Dispose", ItExpr.IsAny<bool>())
+                    .Verifiable();
         }
 
         /// <summary>
@@ -37,7 +39,8 @@
         /// <param name="mock">The Mock<![CDATA[<HttpMessageHandler>]]> used for mocking</param>
         /// <param name="responseStatusCode">The status code that the response will return</param>
         /// <param name="action">Optionally this action will receive the original HttpRequestMessage</param>
-        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null)
+        /// <param name="verifiableDispose">True if the dispose method can be verified. Recommended if the HttpClient is called is a disposable manner.</param>
+        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)
         {
             mock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
@@ -45,9 +48,10 @@
                 .ReturnsAsync(new HttpResponseMessage(responseStatusCode))
                 .Verifiable();
 
-            mock.Protected()
-                .Setup("Dispose", ItExpr.IsAny<bool>())
-                .Verifiable();
+            if (verifiableDispose)
+                mock.Protected()
+                    .Setup("Dispose", ItExpr.IsAny<bool>())
+                    .Verifiable();
         }
 
         /// <summary>
@@ -56,7 +60,8 @@
         /// <param name="mock">The Mock<![CDATA[<HttpMessageHandler>]]> used for mocking</param>
         /// <param name="responseContent">The content that the response will return</param>
         /// <param name="action">Optionally this action will receive the original HttpRequestMessage</param>
-        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpContent responseContent, Action<HttpRequestMessage> action = null)
+        /// <param name="verifiableDispose">True if the dispose method can be verified. Recommended if the HttpClient is called is a disposable manner.</param>
+        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)
         {
             mock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
@@ -67,9 +72,10 @@
                 })
                 .Verifiable();
 
-            mock.Protected()
-                .Setup("Dispose", ItExpr.IsAny<bool>())
-                .Verifiable();
+            if (verifiableDispose)
+                mock.Protected()
+                    .Setup("Dispose", ItExpr.IsAny<bool>())
+                    .Verifiable();
         }
 
         /// <summary>
@@ -79,7 +85,8 @@
         /// <param name="responseStatusCode">The status code that the response will return</param>
         /// <param name="responseContent">The content that the response will return</param>
         /// <param name="action">Optionally this action will receive the original HttpRequestMessage</param>
-        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null)
+        /// <param name="verifiableDispose">True if the dispose method can be verified. Recommended if the HttpClient is called is a disposable manner.</param>
+        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)
         {
             mock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
@@ -90,9 +97,10 @@
                 })
                 .Verifiable();
 
-            mock.Protected()
-                .Setup("Dispose", ItExpr.IsAny<bool>())
-                .Verifiable();
+            if (verifiableDispose)
+                mock.Protected()
+                    .Setup("Dispose", ItExpr.IsAny<bool>())
+                    .Verifiable();
         }
 
         #endregion
@@ -105,7 +113,8 @@
         /// <param name="mock">The Mock<![CDATA[<HttpMessageHandler>]]> used for mocking</param>
         /// <param name="httpRequestMessage">Customized HttpRequestMessage that will be handled with this mock setup</param>
         /// <param name="action">Optionally this action will receive the original HttpRequestMessage</param>
-        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpRequestMessage httpRequestMessage, Action<HttpRequestMessage> action = null)
+        /// <param name="verifiableDispose">True if the dispose method can be verified. Recommended if the HttpClient is called is a disposable manner.</param>
+        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpRequestMessage httpRequestMessage, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)
         {
             mock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", httpRequestMessage, ItExpr.IsAny<CancellationToken>())
@@ -113,9 +122,10 @@
                 .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK))
                 .Verifiable();
 
-            mock.Protected()
-                .Setup("Dispose", ItExpr.IsAny<bool>())
-                .Verifiable();
+            if (verifiableDispose)
+                mock.Protected()
+                    .Setup("Dispose", ItExpr.IsAny<bool>())
+                    .Verifiable();
         }
 
         /// <summary>
@@ -125,7 +135,8 @@
         /// <param name="httpRequestMessage">Customized HttpRequestMessage that will be handled with this mock setup</param>
         /// <param name="responseStatusCode">The status code that the response will return</param>
         /// <param name="action">Optionally this action will receive the original HttpRequestMessage</param>
-        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpRequestMessage httpRequestMessage, HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null)
+        /// <param name="verifiableDispose">True if the dispose method can be verified. Recommended if the HttpClient is called is a disposable manner.</param>
+        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpRequestMessage httpRequestMessage, HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)
         {
             mock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", httpRequestMessage, ItExpr.IsAny<CancellationToken>())
@@ -133,9 +144,10 @@
                 .ReturnsAsync(new HttpResponseMessage(responseStatusCode))
                 .Verifiable();
 
-            mock.Protected()
-                .Setup("Dispose", ItExpr.IsAny<bool>())
-                .Verifiable();
+            if (verifiableDispose)
+                mock.Protected()
+                    .Setup("Dispose", ItExpr.IsAny<bool>())
+                    .Verifiable();
         }
 
         /// <summary>
@@ -145,7 +157,8 @@
         /// <param name="httpRequestMessage">Customized HttpRequestMessage that will be handled with this mock setup</param>
         /// <param name="responseContent">The content that the response will return</param>
         /// <param name="action">Optionally this action will receive the original HttpRequestMessage</param>
-        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpRequestMessage httpRequestMessage, HttpContent responseContent, Action<HttpRequestMessage> action = null)
+        /// <param name="verifiableDispose">True if the dispose method can be verified. Recommended if the HttpClient is called is a disposable manner.</param>
+        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpRequestMessage httpRequestMessage, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)
         {
             mock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", httpRequestMessage, ItExpr.IsAny<CancellationToken>())
@@ -156,9 +169,10 @@
                 })
                 .Verifiable();
 
-            mock.Protected()
-                .Setup("Dispose", ItExpr.IsAny<bool>())
-                .Verifiable();
+            if (verifiableDispose)
+                mock.Protected()
+                    .Setup("Dispose", ItExpr.IsAny<bool>())
+                    .Verifiable();
         }
 
         /// <summary>
@@ -169,7 +183,8 @@
         /// <param name="responseStatusCode">The status code that the response will return</param>
         /// <param name="responseContent">The content that the response will return</param>
         /// <param name="action">Optionally this action will receive the original HttpRequestMessage</param>
-        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpRequestMessage httpRequestMessage, HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null)
+        /// <param name="verifiableDispose">True if the dispose method can be verified. Recommended if the HttpClient is called is a disposable manner.</param>
+        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, HttpRequestMessage httpRequestMessage, HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)
         {
             mock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", httpRequestMessage, ItExpr.IsAny<CancellationToken>())
@@ -180,9 +195,10 @@
                 })
                 .Verifiable();
 
-            mock.Protected()
-                .Setup("Dispose", ItExpr.IsAny<bool>())
-                .Verifiable();
+            if (verifiableDispose)
+                mock.Protected()
+                    .Setup("Dispose", ItExpr.IsAny<bool>())
+                    .Verifiable();
         }
 
         #endregion
@@ -195,7 +211,8 @@
         /// <param name="mock">The Mock<![CDATA[<HttpMessageHandler>]]> used for mocking</param>
         /// <param name="httpRequestMessageExpression">Expression that matches the desired HttpRequestMessage that will be handled</param>
         /// <param name="action">Optionally this action will receive the original HttpRequestMessage</param>
-        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, Action<HttpRequestMessage> action = null)
+        /// <param name="verifiableDispose">True if the dispose method can be verified. Recommended if the HttpClient is called is a disposable manner.</param>
+        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)
         {
             mock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.Is(httpRequestMessageExpression), ItExpr.IsAny<CancellationToken>())
@@ -203,9 +220,10 @@
                 .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK))
                 .Verifiable();
 
-            mock.Protected()
-                .Setup("Dispose", ItExpr.IsAny<bool>())
-                .Verifiable();
+            if (verifiableDispose)
+                mock.Protected()
+                    .Setup("Dispose", ItExpr.IsAny<bool>())
+                    .Verifiable();
         }
 
         /// <summary>
@@ -215,7 +233,8 @@
         /// <param name="httpRequestMessageExpression">Expression that matches the desired HttpRequestMessage that will be handled</param>
         /// <param name="responseStatusCode">The status code that the response will return</param>
         /// <param name="action">Optionally this action will receive the original HttpRequestMessage</param>
-        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null)
+        /// <param name="verifiableDispose">True if the dispose method can be verified. Recommended if the HttpClient is called is a disposable manner.</param>
+        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)
         {
             mock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.Is(httpRequestMessageExpression), ItExpr.IsAny<CancellationToken>())
@@ -223,9 +242,10 @@
                 .ReturnsAsync(new HttpResponseMessage(responseStatusCode))
                 .Verifiable();
 
-            mock.Protected()
-                .Setup("Dispose", ItExpr.IsAny<bool>())
-                .Verifiable();
+            if (verifiableDispose)
+                mock.Protected()
+                    .Setup("Dispose", ItExpr.IsAny<bool>())
+                    .Verifiable();
         }
 
         /// <summary>
@@ -235,7 +255,8 @@
         /// <param name="httpRequestMessageExpression">Expression that matches the desired HttpRequestMessage that will be handled</param>
         /// <param name="responseContent">The content that the response will return</param>
         /// <param name="action">Optionally this action will receive the original HttpRequestMessage</param>
-        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpContent responseContent, Action<HttpRequestMessage> action = null)
+        /// <param name="verifiableDispose">True if the dispose method can be verified. Recommended if the HttpClient is called is a disposable manner.</param>
+        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)
         {
             mock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.Is(httpRequestMessageExpression), ItExpr.IsAny<CancellationToken>())
@@ -246,9 +267,10 @@
                 })
                 .Verifiable();
 
-            mock.Protected()
-                .Setup("Dispose", ItExpr.IsAny<bool>())
-                .Verifiable();
+            if (verifiableDispose)
+                mock.Protected()
+                    .Setup("Dispose", ItExpr.IsAny<bool>())
+                    .Verifiable();
         }
 
         /// <summary>
@@ -259,7 +281,8 @@
         /// <param name="responseStatusCode">The status code that the response will return</param>
         /// <param name="responseContent">The content that the response will return</param>
         /// <param name="action">Optionally this action will receive the original HttpRequestMessage</param>
-        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null)
+        /// <param name="verifiableDispose">True if the dispose method can be verified. Recommended if the HttpClient is called is a disposable manner.</param>
+        public static void SetupHttpResponseMessage(this Mock<HttpMessageHandler> mock, Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)
         {
             mock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.Is(httpRequestMessageExpression), ItExpr.IsAny<CancellationToken>())
@@ -270,9 +293,10 @@
                 })
                 .Verifiable();
 
-            mock.Protected()
-                .Setup("Dispose", ItExpr.IsAny<bool>())
-                .Verifiable();
+            if (verifiableDispose)
+                mock.Protected()
+                    .Setup("Dispose", ItExpr.IsAny<bool>())
+                    .Verifiable();
         }
 
         #endregion

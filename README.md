@@ -14,7 +14,7 @@ Consuming an API is something common today and a .NET Developer normally uses a 
 
   ```csharp
   public class ExampleClass {
-      private readonly Mock<IHttpClientFactory> _httpClientFactoryMock;
+      private readonly IHttpClientFactory _httpClientFactoryMock;
       
       public ExampleClass(IHttpClientFactory httpClientFactory)
       {
@@ -103,20 +103,20 @@ First, we use the extension method `SetupHttpResponseMessage` to set up a reques
 
 For a `HttpMessageHandler` mock, the following extension methods are added using **MoqExtensions.HttpResponseMessage**:
 
-- `SetupHttpResponseMessage(Action<HttpRequestMessage> action = null)`
-- `SetupHttpResponseMessage(HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null)`
-- `SetupHttpResponseMessage(HttpContent responseContent, Action<HttpRequestMessage> action = null)`
-- `SetupHttpResponseMessage(HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null)`
+- `SetupHttpResponseMessage(Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
+- `SetupHttpResponseMessage(HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
+- `SetupHttpResponseMessage(HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
+- `SetupHttpResponseMessage(HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
 
-- `SetupHttpResponseMessage(HttpRequestMessage httpRequestMessage, Action<HttpRequestMessage> action = null)`
-- `SetupHttpResponseMessage(HttpRequestMessage httpRequestMessage, HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null)`
-- `SetupHttpResponseMessage(HttpRequestMessage httpRequestMessage, HttpContent responseContent, Action<HttpRequestMessage> action = null)`
-- `SetupHttpResponseMessage(HttpRequestMessage httpRequestMessage, HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null)`
+- `SetupHttpResponseMessage(HttpRequestMessage httpRequestMessage, Action<HttpRequestMessage> action = null, bool verifiableDispose = true, bool verifiableDispose = true)`
+- `SetupHttpResponseMessage(HttpRequestMessage httpRequestMessage, HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null, bool verifiableDispose = true, bool verifiableDispose = true)`
+- `SetupHttpResponseMessage(HttpRequestMessage httpRequestMessage, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true, bool verifiableDispose = true)`
+- `SetupHttpResponseMessage(HttpRequestMessage httpRequestMessage, HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
 
-- `SetupHttpResponseMessage(Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, Action<HttpRequestMessage> action = null)`
-- `SetupHttpResponseMessage(Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null)`
-- `SetupHttpResponseMessage(Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpContent responseContent, Action<HttpRequestMessage> action = null)`
-- `SetupHttpResponseMessage(Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null)`
+- `SetupHttpResponseMessage(Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
+- `SetupHttpResponseMessage(Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
+- `SetupHttpResponseMessage(Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
+- `SetupHttpResponseMessage(Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
 
 - `HttpClient CreateHttpClientMock(string baseAddress)`
 
@@ -134,5 +134,6 @@ For a `IHttpClientFactory` mock, the following extensions methods are added usin
 ### Next Steps
 
 - [X] Version 1.0.0 on Nuget 
-- [x] Add custom requests when creating a mock
+- [X] Add custom requests when creating a mock
+- [X] Add parameter for testing when a HttpClient is Disposable (parameter `verifiableDispose`)
 

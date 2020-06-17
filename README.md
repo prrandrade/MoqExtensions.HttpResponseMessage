@@ -4,7 +4,7 @@
 
 This project intends to facilitate the creation of mocked **HttpResponseMessage** objects given an already created **HttpMessageHandler** mocks using the **Moq** library. The objective here is to abstract the used logic when creating a **HttpResponseMessage** given a specific or generic **HttpRequestMessage**.
 
-
+Nuget package: https://www.nuget.org/packages/MoqExtensions.HttpResponseMessage/
 
 ### Problem
 

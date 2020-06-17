@@ -193,9 +193,11 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
         #region Mock<HttpMessageHandler> with customized HttpRequestMessage
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public async Task SetupHttpResponseMessage_WithRequest(bool withAction)
+        [InlineData(false, true)]
+        [InlineData(true, true)]
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        public async Task SetupHttpResponseMessage_WithRequest(bool withAction, bool verifiableDispose)
         {
             // arrange
             var mockedRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://www.site.com.br/");
@@ -210,12 +212,18 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
                 {
                     actionIsCalled = true;
                     requestMessage = request;
-                });
+                }, verifiableDispose: verifiableDispose);
             else
-                mock.SetupHttpResponseMessage(mockedRequestMessage);
+                mock.SetupHttpResponseMessage(mockedRequestMessage, verifiableDispose: verifiableDispose);
 
-            using (var httpClient = new HttpClient(mock.Object))
+            if (verifiableDispose)
+                using (var httpClient = new HttpClient(mock.Object))
+                {
+                    responseMessage = await httpClient.SendAsync(mockedRequestMessage);
+                }
+            else
             {
+                var httpClient = new HttpClient(mock.Object);
                 responseMessage = await httpClient.SendAsync(mockedRequestMessage);
             }
 
@@ -224,13 +232,21 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
             Assert.Equal(HttpStatusCode.OK, responseMessage.StatusCode);
             if (withAction) Assert.True(actionIsCalled);
             if (withAction) Assert.Equal(mockedRequestMessage, requestMessage);
-            mock.Verify();
+            if (verifiableDispose)
+                mock.Verify();
+            else
+            {
+                mock.Protected().Verify("SendAsync", Times.Once(), mockedRequestMessage, ItExpr.IsAny<CancellationToken>());
+                mock.Protected().Verify("Dispose", Times.Never(), ItExpr.IsAny<bool>());
+            }
         }
 
         [Theory]
-        [InlineData(false, HttpStatusCode.BadGateway)]
-        [InlineData(true, HttpStatusCode.Created)]
-        public async Task SetupHttpResponseMessage_WithRequest_WithHttpStatusCode(bool withAction, HttpStatusCode responseStatusCode)
+        [InlineData(false, HttpStatusCode.BadGateway, true)]
+        [InlineData(true, HttpStatusCode.Created, true)]
+        [InlineData(false, HttpStatusCode.BadGateway, false)]
+        [InlineData(true, HttpStatusCode.Created, false)]
+        public async Task SetupHttpResponseMessage_WithRequest_WithHttpStatusCode(bool withAction, HttpStatusCode responseStatusCode, bool verifiableDispose)
         {
             // arrange
             var mockedRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://www.site.com.br/");
@@ -245,12 +261,18 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
                 {
                     actionIsCalled = true;
                     requestMessage = request;
-                });
+                }, verifiableDispose: verifiableDispose);
             else
-                mock.SetupHttpResponseMessage(mockedRequestMessage, responseStatusCode);
+                mock.SetupHttpResponseMessage(mockedRequestMessage, responseStatusCode, verifiableDispose: verifiableDispose);
 
-            using (var httpClient = new HttpClient(mock.Object))
+            if (verifiableDispose)
+                using (var httpClient = new HttpClient(mock.Object))
+                {
+                    responseMessage = await httpClient.SendAsync(mockedRequestMessage);
+                }
+            else
             {
+                var httpClient = new HttpClient(mock.Object);
                 responseMessage = await httpClient.SendAsync(mockedRequestMessage);
             }
 
@@ -259,13 +281,21 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
             Assert.Equal(responseStatusCode, responseMessage.StatusCode);
             if (withAction) Assert.True(actionIsCalled);
             if (withAction) Assert.Equal(mockedRequestMessage, requestMessage);
-            mock.Verify();
+            if (verifiableDispose)
+                mock.Verify();
+            else
+            {
+                mock.Protected().Verify("SendAsync", Times.Once(), mockedRequestMessage, ItExpr.IsAny<CancellationToken>());
+                mock.Protected().Verify("Dispose", Times.Never(), ItExpr.IsAny<bool>());
+            }
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public async Task SetupHttpResponseMessage_WithRequest_WithContent(bool withAction)
+        [InlineData(false, true)]
+        [InlineData(true, true)]
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        public async Task SetupHttpResponseMessage_WithRequest_WithContent(bool withAction, bool verifiableDispose)
         {
             // arrange
             var mockedRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://www.site.com.br/");
@@ -281,12 +311,18 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
                 {
                     actionIsCalled = true;
                     requestMessage = request;
-                });
+                }, verifiableDispose: verifiableDispose);
             else
-                mock.SetupHttpResponseMessage(mockedRequestMessage, responseContent: responseContent);
+                mock.SetupHttpResponseMessage(mockedRequestMessage, responseContent: responseContent, verifiableDispose: verifiableDispose);
 
-            using (var httpClient = new HttpClient(mock.Object))
+            if (verifiableDispose)
+                using (var httpClient = new HttpClient(mock.Object))
+                {
+                    responseMessage = await httpClient.SendAsync(mockedRequestMessage);
+                }
+            else
             {
+                var httpClient = new HttpClient(mock.Object);
                 responseMessage = await httpClient.SendAsync(mockedRequestMessage);
             }
 
@@ -295,13 +331,21 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
             Assert.Equal(responseContent, responseMessage.Content);
             if (withAction) Assert.True(actionIsCalled);
             if (withAction) Assert.Equal(mockedRequestMessage, requestMessage);
-            mock.Verify();
+            if (verifiableDispose)
+                mock.Verify();
+            else
+            {
+                mock.Protected().Verify("SendAsync", Times.Once(), mockedRequestMessage, ItExpr.IsAny<CancellationToken>());
+                mock.Protected().Verify("Dispose", Times.Never(), ItExpr.IsAny<bool>());
+            }
         }
 
         [Theory]
-        [InlineData(false, HttpStatusCode.BadGateway)]
-        [InlineData(true, HttpStatusCode.Created)]
-        public async Task SetupHttpResponseMessage_WithRequest_WithHttpStatusCodeAndContent(bool withAction, HttpStatusCode responseStatusCode)
+        [InlineData(false, HttpStatusCode.BadGateway, true)]
+        [InlineData(true, HttpStatusCode.Created, true)]
+        [InlineData(false, HttpStatusCode.BadGateway, false)]
+        [InlineData(true, HttpStatusCode.Created, false)]
+        public async Task SetupHttpResponseMessage_WithRequest_WithHttpStatusCodeAndContent(bool withAction, HttpStatusCode responseStatusCode, bool verifiableDispose)
         {
             // arrange
             var mockedRequestMessage = new HttpRequestMessage(HttpMethod.Get, "http://www.site.com.br/");
@@ -317,12 +361,18 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
                 {
                     actionIsCalled = true;
                     requestMessage = request;
-                });
+                }, verifiableDispose: verifiableDispose);
             else
-                mock.SetupHttpResponseMessage(mockedRequestMessage, responseStatusCode, responseContent: responseContent);
+                mock.SetupHttpResponseMessage(mockedRequestMessage, responseStatusCode, responseContent: responseContent, verifiableDispose: verifiableDispose);
 
-            using (var httpClient = new HttpClient(mock.Object))
+            if (verifiableDispose)
+                using (var httpClient = new HttpClient(mock.Object))
+                {
+                    responseMessage = await httpClient.SendAsync(mockedRequestMessage);
+                }
+            else
             {
+                var httpClient = new HttpClient(mock.Object);
                 responseMessage = await httpClient.SendAsync(mockedRequestMessage);
             }
 
@@ -331,7 +381,13 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
             Assert.Equal(responseContent, responseMessage.Content);
             if (withAction) Assert.True(actionIsCalled);
             if (withAction) Assert.Equal(mockedRequestMessage, requestMessage);
-            mock.Verify();
+            if (verifiableDispose)
+                mock.Verify();
+            else
+            {
+                mock.Protected().Verify("SendAsync", Times.Once(), mockedRequestMessage, ItExpr.IsAny<CancellationToken>());
+                mock.Protected().Verify("Dispose", Times.Never(), ItExpr.IsAny<bool>());
+            }
         }
 
         #endregion
@@ -339,9 +395,11 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
         #region Mock<HttpMessageHandler> with customized Expression<Func<HttpRequestMessage, bool>>
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public async Task SetupHttpResponseMessage_WithCustomizedRequest(bool withAction)
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        [InlineData(true, true)]
+        public async Task SetupHttpResponseMessage_WithCustomizedRequest(bool withAction, bool verifiableDispose)
         {
             // arrange
             const string requestUri = "http://www.site.com.br/";
@@ -361,8 +419,14 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
             else
                 mock.SetupHttpResponseMessage(request => request.RequestUri == new Uri(requestUri));
 
-            using (var httpClient = new HttpClient(mock.Object))
+            if (verifiableDispose)
+                using (var httpClient = new HttpClient(mock.Object))
+                {
+                    responseMessage = await httpClient.SendAsync(mockedRequestMessage);
+                }
+            else
             {
+                var httpClient = new HttpClient(mock.Object);
                 responseMessage = await httpClient.SendAsync(mockedRequestMessage);
             }
 
@@ -371,13 +435,22 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
             Assert.Equal(HttpStatusCode.OK, responseMessage.StatusCode);
             if (withAction) Assert.True(actionIsCalled);
             if (withAction) Assert.Equal(requestUri, requestMessage.RequestUri.AbsoluteUri);
-            mock.Verify();
+
+            if (verifiableDispose)
+                mock.Verify();
+            else
+            {
+                mock.Protected().Verify("SendAsync", Times.Once(), ItExpr.Is<HttpRequestMessage>(request => request.RequestUri == new Uri(requestUri)), ItExpr.IsAny<CancellationToken>());
+                mock.Protected().Verify("Dispose", Times.Never(), ItExpr.IsAny<bool>());
+            }
         }
 
         [Theory]
-        [InlineData(false, HttpStatusCode.BadGateway)]
-        [InlineData(true, HttpStatusCode.Created)]
-        public async Task SetupHttpResponseMessage_WithCustomizedRequest_WithHttpStatusCode(bool withAction, HttpStatusCode responseStatusCode)
+        [InlineData(false, HttpStatusCode.BadGateway, false)]
+        [InlineData(true, HttpStatusCode.Created, false)]
+        [InlineData(false, HttpStatusCode.BadGateway, true)]
+        [InlineData(true, HttpStatusCode.Created, true)]
+        public async Task SetupHttpResponseMessage_WithCustomizedRequest_WithHttpStatusCode(bool withAction, HttpStatusCode responseStatusCode, bool verifiableDispose)
         {
             // arrange
             const string requestUri = "http://www.site.com.br/";
@@ -397,8 +470,14 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
             else
                 mock.SetupHttpResponseMessage(request => request.RequestUri == new Uri(requestUri), responseStatusCode);
 
-            using (var httpClient = new HttpClient(mock.Object))
+            if (verifiableDispose)
+                using (var httpClient = new HttpClient(mock.Object))
+                {
+                    responseMessage = await httpClient.SendAsync(mockedRequestMessage);
+                }
+            else
             {
+                var httpClient = new HttpClient(mock.Object);
                 responseMessage = await httpClient.SendAsync(mockedRequestMessage);
             }
 
@@ -407,13 +486,21 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
             Assert.Equal(responseStatusCode, responseMessage.StatusCode);
             if (withAction) Assert.True(actionIsCalled);
             if (withAction) Assert.Equal(requestUri, requestMessage.RequestUri.AbsoluteUri);
-            mock.Verify();
+            if (verifiableDispose)
+                mock.Verify();
+            else
+            {
+                mock.Protected().Verify("SendAsync", Times.Once(), ItExpr.Is<HttpRequestMessage>(request => request.RequestUri == new Uri(requestUri)), ItExpr.IsAny<CancellationToken>());
+                mock.Protected().Verify("Dispose", Times.Never(), ItExpr.IsAny<bool>());
+            }
         }
 
         [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public async Task SetupHttpResponseMessage_WithCustomizedRequest_WithContent(bool withAction)
+        [InlineData(false, false)]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        [InlineData(true, true)]
+        public async Task SetupHttpResponseMessage_WithCustomizedRequest_WithContent(bool withAction, bool verifiableDispose)
         {
             // arrange
             const string requestUri = "http://www.site.com.br/";
@@ -434,8 +521,14 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
             else
                 mock.SetupHttpResponseMessage(request => request.RequestUri == new Uri(requestUri), responseContent: responseContent);
 
-            using (var httpClient = new HttpClient(mock.Object))
+            if (verifiableDispose)
+                using (var httpClient = new HttpClient(mock.Object))
+                {
+                    responseMessage = await httpClient.SendAsync(mockedRequestMessage);
+                }
+            else
             {
+                var httpClient = new HttpClient(mock.Object);
                 responseMessage = await httpClient.SendAsync(mockedRequestMessage);
             }
 
@@ -444,13 +537,21 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
             Assert.Equal(responseContent, responseMessage.Content);
             if (withAction) Assert.True(actionIsCalled);
             if (withAction) Assert.Equal(requestUri, requestMessage.RequestUri.AbsoluteUri);
-            mock.Verify();
+            if (verifiableDispose)
+                mock.Verify();
+            else
+            {
+                mock.Protected().Verify("SendAsync", Times.Once(), ItExpr.Is<HttpRequestMessage>(request => request.RequestUri == new Uri(requestUri)), ItExpr.IsAny<CancellationToken>());
+                mock.Protected().Verify("Dispose", Times.Never(), ItExpr.IsAny<bool>());
+            }
         }
 
         [Theory]
-        [InlineData(false, HttpStatusCode.BadGateway)]
-        [InlineData(true, HttpStatusCode.Created)]
-        public async Task SetupHttpResponseMessage_WithCustomizedRequest_WithHttpStatusCodeAndContent(bool withAction, HttpStatusCode responseStatusCode)
+        [InlineData(false, HttpStatusCode.BadGateway, false)]
+        [InlineData(true, HttpStatusCode.Created, false)]
+        [InlineData(false, HttpStatusCode.BadGateway, true)]
+        [InlineData(true, HttpStatusCode.Created, true)]
+        public async Task SetupHttpResponseMessage_WithCustomizedRequest_WithHttpStatusCodeAndContent(bool withAction, HttpStatusCode responseStatusCode, bool verifiableDispose)
         {
             // arrange
             const string requestUri = "http://www.site.com.br/";
@@ -471,8 +572,14 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
             else
                 mock.SetupHttpResponseMessage(request => request.RequestUri == new Uri(requestUri), responseStatusCode, responseContent: responseContent);
 
-            using (var httpClient = new HttpClient(mock.Object))
+            if (verifiableDispose)
+                using (var httpClient = new HttpClient(mock.Object))
+                {
+                    responseMessage = await httpClient.SendAsync(mockedRequestMessage);
+                }
+            else
             {
+                var httpClient = new HttpClient(mock.Object);
                 responseMessage = await httpClient.SendAsync(mockedRequestMessage);
             }
 
@@ -481,7 +588,13 @@ namespace MoqExtensions.HttpResponseMessage.UnitTest
             Assert.Equal(responseContent, responseMessage.Content);
             if (withAction) Assert.True(actionIsCalled);
             if (withAction) Assert.Equal(requestUri, requestMessage.RequestUri.AbsoluteUri);
-            mock.Verify();
+            if (verifiableDispose)
+                mock.Verify();
+            else
+            {
+                mock.Protected().Verify("SendAsync", Times.Once(), ItExpr.Is<HttpRequestMessage>(request => request.RequestUri == new Uri(requestUri)), ItExpr.IsAny<CancellationToken>());
+                mock.Protected().Verify("Dispose", Times.Never(), ItExpr.IsAny<bool>());
+            }
         }
 
         #endregion

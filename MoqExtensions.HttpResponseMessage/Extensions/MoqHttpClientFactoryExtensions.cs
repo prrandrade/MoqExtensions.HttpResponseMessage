@@ -1,4 +1,4 @@
-﻿namespace MoqExtensions.HttpResponseMessage
+﻿namespace MoqExtensions.HttpResponseMessage.Extensions
 {
     using System.Net.Http;
     using Microsoft.Extensions.Options;
@@ -25,7 +25,7 @@
         /// <param name="mockMessageHandler">The Mock<![CDATA[<HttpMessageHandler>]]> that will be used when creating a HttpClient</param>
         /// <param name="baseAddress">The base address that the HttpClient will use</param>
         /// <returns>The customized HttpClient that will be used with the passed Mock<![CDATA[<IHttpClientFactory>]]></returns>
-        public static HttpClient SetupHttpClientFactory(this Mock<IHttpClientFactory> mockClientFactory, Mock<HttpMessageHandler> mockMessageHandler, string baseAddress)
+        public static HttpClient SetupHttpClientFactory(this Mock<IHttpClientFactory> mockClientFactory, Mock<HttpMessageHandler> mockMessageHandler, string baseAddress = null)
         {
             var httpClient = mockMessageHandler.CreateHttpClientMock(baseAddress);
             mockClientFactory.SetupHttpClientFactory(httpClient);
@@ -50,10 +50,10 @@
         /// </summary>
         /// <param name="mockClientFactory">The Mock<![CDATA[<IHttpClientFactory>]]> that will be setup</param>
         /// <param name="mockMessageHandler">The Mock<![CDATA[<HttpMessageHandler>]]> that will be used when creating a HttpClient</param>
-        /// <param name="baseAddress">The base address that the HttpClient will use</param>
         /// <param name="httpClientName">Thew customized HttpClient name</param>
+        /// /// <param name="baseAddress">The base address that the HttpClient will use</param>
         /// <returns>The customized HttpClient that will be used with the passed Mock<![CDATA[<IHttpClientFactory>]]></returns>
-        public static HttpClient SetupHttpClientFactory(this Mock<IHttpClientFactory> mockClientFactory, Mock<HttpMessageHandler> mockMessageHandler, string baseAddress, string httpClientName)
+        public static HttpClient SetupHttpClientFactory(this Mock<IHttpClientFactory> mockClientFactory, Mock<HttpMessageHandler> mockMessageHandler, string httpClientName, string baseAddress)
         {
             var httpClient = mockMessageHandler.CreateHttpClientMock(baseAddress);
             mockClientFactory.SetupHttpClientFactory(httpClient, httpClientName);

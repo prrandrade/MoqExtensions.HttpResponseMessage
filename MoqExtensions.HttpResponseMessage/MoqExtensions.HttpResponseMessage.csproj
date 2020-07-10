@@ -12,13 +12,13 @@
     <RepositoryUrl>https://github.com/prrandrade/MoqExtensions.HttpResponseMessage</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>moq;mocks;unittesting;unittest;httpclient;httpclientfactory;httpmessagehandler;httprequestmessage;httpresponsemessage</PackageTags>
-    <PackageReleaseNotes>Verifing tests can include both disposable and not disposable HttpClient approachs</PackageReleaseNotes>
+    <PackageReleaseNotes>Verifying tests can include both disposable and not disposable HttpClient approachs</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.5" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.5" />
-    <PackageReference Include="Moq" Version="4.14.1" />
+    <PackageReference Include="Moq" Version="4.14.5" />
   </ItemGroup>
 
 </Project>

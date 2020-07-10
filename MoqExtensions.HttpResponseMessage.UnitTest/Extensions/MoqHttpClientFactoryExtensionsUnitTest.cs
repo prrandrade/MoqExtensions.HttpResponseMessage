@@ -1,9 +1,10 @@
-﻿namespace MoqExtensions.HttpResponseMessage.UnitTest
+﻿namespace MoqExtensions.HttpResponseMessage.UnitTest.Extensions
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Net.Http;
     using System.Reflection;
+    using HttpResponseMessage.Extensions;
     using Microsoft.Extensions.Options;
     using Moq;
     using Xunit;
@@ -73,7 +74,7 @@
             var customName = Guid.NewGuid().ToString();
 
             // act
-            var httpClient = httpClientFactoryMock.SetupHttpClientFactory(messageHandlerMock, baseAddress, customName);
+            var httpClient = httpClientFactoryMock.SetupHttpClientFactory(messageHandlerMock, customName, baseAddress);
             var resultHttpClient = httpClientFactoryMock.Object.CreateClient(customName);
 
             // assert

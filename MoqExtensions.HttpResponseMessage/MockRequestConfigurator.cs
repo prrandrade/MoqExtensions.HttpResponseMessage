@@ -74,16 +74,16 @@
             Expression requestMessageExpression;
             
             #region Defining the requestMessageExpression
-
-            if (RequestMethod == null && RequestUri == null)
-                requestMessageExpression = ItExpr.IsAny<HttpRequestMessage>();
+            
+            if (RequestMethod != null && RequestUri != null)
+                requestMessageExpression = ItExpr.Is<HttpRequestMessage>(x => x.Method == RequestMethod && x.RequestUri == RequestUri);
             else if (RequestMethod != null)
                 requestMessageExpression = ItExpr.Is<HttpRequestMessage>(x => x.Method == RequestMethod);
             else if (RequestUri != null)
                 requestMessageExpression = ItExpr.Is<HttpRequestMessage>(x => x.RequestUri == RequestUri);
             else
-                requestMessageExpression = ItExpr.Is<HttpRequestMessage>(x => x.Method == RequestMethod && x.RequestUri == RequestUri);
-            
+                requestMessageExpression = ItExpr.IsAny<HttpRequestMessage>();
+
             #endregion
 
             var response = new HttpResponseMessage(ResponseStatusCode);

@@ -12,7 +12,7 @@
     <RepositoryUrl>https://github.com/prrandrade/MoqExtensions.HttpResponseMessage</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>moq;mocks;unittesting;unittest;httpclient;httpclientfactory;httpmessagehandler;httprequestmessage;httpresponsemessage</PackageTags>
-    <PackageReleaseNotes>Verifying tests can include both disposable and not disposable HttpClient approachs</PackageReleaseNotes>
+    <PackageReleaseNotes>Bugfix</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

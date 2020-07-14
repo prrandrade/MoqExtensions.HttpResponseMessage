@@ -1,5 +1,6 @@
 ﻿namespace MoqExtensions.HttpResponseMessage.UnitTest
 {
+    using System;
     using System.Net;
     using System.Net.Http;
     using System.Text;
@@ -127,12 +128,14 @@
         }
 
         [Fact]
-        public async void BuildAt()
+        public async void BuildAt_WithResponseMethod_WithRequestMethod_WithRequestUri()
         {
             // arrange
+            const string requestAddress = "http://www.somesite.com/";
+            const string otherRequestAddress = "http://www.someothersite.com/";
+
             var mock = new Mock<HttpMessageHandler>();
             const HttpStatusCode responseStatusCode = HttpStatusCode.Created;
-            const string requestAddress = "http://www.somesite.com/";
             var originalMessageContent = new DummyObject { DummyValue = 1 };
 
             // act
@@ -148,12 +151,124 @@
                 .BuildAt(mock);
 
             using var httpClient = new HttpClient(mock.Object);
+
+            // act correct case
             var response = await httpClient.PostAsync(requestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json"));
 
-            // assert
+            // assert correct case
             Assert.Equal(responseStatusCode, response.StatusCode);
             Assert.Equal(requestAddress, requestMessage.RequestUri.AbsoluteUri);
             Assert.Equal(originalMessageContent.DummyValue, requestMessageContent.DummyValue);
+
+            // act incorrect cases
+            var exception1 = await Record.ExceptionAsync(async () => await httpClient.PutAsync(requestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json")));
+            var exception2 = await Record.ExceptionAsync(async () => await httpClient.PostAsync(otherRequestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json")));
+
+            // assert incorrect cases
+            Assert.IsType<InvalidOperationException>(exception1);
+            Assert.IsType<InvalidOperationException>(exception2);
+        }
+
+        [Fact]
+        public async void BuildAt_WithResponseMethod()
+        {
+            // arrange
+            const string requestAddress = "http://www.somesite.com/";
+            const string otherRequestAddress = "http://www.someothersite.com/";
+
+            var mock = new Mock<HttpMessageHandler>();
+            const HttpStatusCode responseStatusCode = HttpStatusCode.Created;
+            var originalMessageContent = new DummyObject { DummyValue = 1 };
+
+            // act
+            MockRequestConfiguration.New<DummyObject, DummyObject>()
+                .WithResponseStatusCode(responseStatusCode)
+                .WithRequestMethod(HttpMethod.Post)
+                .BuildAt(mock);
+
+            using var httpClient = new HttpClient(mock.Object);
+
+            // act correct cases
+            var response1 = await httpClient.PostAsync(requestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json"));
+            var response2 = await httpClient.PostAsync(otherRequestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json"));
+
+            // assert correct cases
+            Assert.Equal(responseStatusCode, response1.StatusCode);
+            Assert.Equal(responseStatusCode, response2.StatusCode);
+
+            // act incorrect cases
+            var exception1 = await Record.ExceptionAsync(async () => await httpClient.PutAsync(requestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json")));
+            var exception2 = await Record.ExceptionAsync(async () => await httpClient.PutAsync(otherRequestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json")));
+
+            // assert incorrect cases
+            Assert.IsType<InvalidOperationException>(exception1);
+            Assert.IsType<InvalidOperationException>(exception2);
+        }
+
+        [Fact]
+        public async void BuildAt_WithRequestUri()
+        {
+            // arrange
+            const string requestAddress = "http://www.somesite.com/";
+            const string otherRequestAddress = "http://www.someothersite.com/";
+
+            var mock = new Mock<HttpMessageHandler>();
+            var originalMessageContent = new DummyObject { DummyValue = 1 };
+
+            MockRequestConfiguration.New<DummyObject, DummyObject>()
+                 .BuildAt(mock);
+
+            using var httpClient = new HttpClient(mock.Object);
+
+            // act correct cases
+            var response1 = await httpClient.PostAsync(requestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json"));
+            var response2 = await httpClient.PutAsync(requestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json"));
+            var response3 = await httpClient.PostAsync(otherRequestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json"));
+            var response4 = await httpClient.PutAsync(otherRequestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json"));
+
+            // assert correct cases
+            Assert.Equal(HttpStatusCode.OK, response1.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response2.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response3.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response4.StatusCode);
+        }
+
+        [Fact]
+        public async void BuildAt_WithStringResponseContent()
+        {
+            // arrange
+            const string responseContent = "example";
+            var mock = new Mock<HttpMessageHandler>();
+
+            MockRequestConfiguration.New<string>()
+                .WithResponseContent(responseContent)
+                .BuildAt(mock);
+            using var httpClient = new HttpClient(mock.Object);
+
+            // act
+            var response = await httpClient.GetAsync("http://www.somesite.com/");
+
+            // assert
+            Assert.Equal(responseContent, (await response.Content.ReadAsStringAsync()));
+        }
+
+        [Fact]
+        public async void BuildAt_WithObjectResponseContent()
+        {
+            // arrange
+            var responseContent = new DummyObject { DummyValue = 5 };
+            var mock = new Mock<HttpMessageHandler>();
+
+            MockRequestConfiguration.New<DummyObject>()
+                .WithResponseContent(responseContent)
+                .BuildAt(mock);
+            using var httpClient = new HttpClient(mock.Object);
+
+            // act
+            var response = await httpClient.PostAsync("http://www.somesite.com/", new StringContent(JsonSerializer.Serialize(new DummyObject()), Encoding.UTF8, "application/json"));
+
+            // assert
+            Assert.Equal(responseContent.DummyValue, JsonSerializer.Deserialize<DummyObject>(await response.Content.ReadAsStringAsync()).DummyValue);
         }
     }
 }

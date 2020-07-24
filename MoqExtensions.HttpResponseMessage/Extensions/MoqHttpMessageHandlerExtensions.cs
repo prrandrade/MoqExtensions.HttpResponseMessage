@@ -1,11 +1,7 @@
 ﻿namespace MoqExtensions.HttpResponseMessage.Extensions
 {
     using System;
-    using System.Linq.Expressions;
-    using System.Net;
     using System.Net.Http;
-    using System.Threading;
-    using System.Threading.Tasks;
     using Moq;
     using Moq.Protected;
 

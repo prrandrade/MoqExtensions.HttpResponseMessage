@@ -1,7 +1,6 @@
 ﻿namespace MoqExtensions.HttpResponseMessage
 {
     using System;
-    using System.Diagnostics.CodeAnalysis;
     using System.Linq.Expressions;
     using System.Net;
     using System.Net.Http;
@@ -11,7 +10,6 @@
     using Moq;
     using Moq.Protected;
 
-    [ExcludeFromCodeCoverage]
     public class MockRequestConfiguration
     {
         public static MockRequestConfiguration<TReq, TResp> New<TReq, TResp>() where TReq : class where TResp : class

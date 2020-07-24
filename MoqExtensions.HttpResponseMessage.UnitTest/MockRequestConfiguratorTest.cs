@@ -16,6 +16,27 @@
     public class MockRequestConfiguratorTest
     {
         [Fact]
+        public void CreatingNewConfigurationWithRequest()
+        {
+            // act
+            var result = MockRequestConfiguration.New<DummyObject>();
+
+            // assert
+            Assert.IsType<MockRequestConfiguration<DummyObject, object>>(result);
+        }
+
+        [Fact]
+        public void CreatingNewConfigurationWithRequestAndResponse()
+        {
+            // act
+            var result = MockRequestConfiguration.New<string, DummyObject>();
+
+            // assert
+            Assert.IsType<MockRequestConfiguration<string, DummyObject>>(result);
+        }
+
+
+        [Fact]
         public void WithRequestMethod()
         {
             // arrange

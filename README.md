@@ -1,4 +1,5 @@
-# MoqExtensions.HttpResponseMessage
+Getting started with Markdown
+=============================
 
 # Summary
 
@@ -13,29 +14,33 @@ This project intends to facilitate the creation of mocked **HttpResponseMessage*
 
 Nuget package: https://www.nuget.org/packages/MoqExtensions.HttpResponseMessage/
 
+
+
 # Problem
 
 Consuming an API is something common today and a .NET Developer normally uses a HttpClient to achieve it. The problem happens when a Unit Test needs to be written, because of two problems:
 
 - The `HttpClient` commonly is created inside the method (or the class) that will consume an API. This approach creates an undesired dependency, which goes against the **Dependency Inversion Principle** (the last of the five S.O.L.I.D. principles). Fortunately, the .NET Core framework contains the `IHttpClientFactory` interface that can be injected and can be used to create a `HttpClient`.
 
-  ```csharp
-  public class ExampleClass {
-      private readonly IHttpClientFactory _httpClientFactoryMock;
-      
-      public ExampleClass(IHttpClientFactory httpClientFactory)
-      {
-          _httpClientFactory = httpClientFactory;
-      }
-      
-      public SomeMethod() {
-          using var client = _httpClientFactory.CreateClient();
-          // code continues
-      }
-  }
+```csharp
+public class ExampleClass {
+    private readonly IHttpClientFactory _httpClientFactoryMock;
+    
+    public ExampleClass(IHttpClientFactory httpClientFactory)
+    {
+        _httpClientFactory = httpClientFactory;
+    }
+    
+    public SomeMethod() {
+        using var client = _httpClientFactory.CreateClient();
+        // code continues
+    }
+}
 ```
 
 - Even using an `IHttpClientFactory` to dynamically create a `HttpClient`, this object does not implement any interface, so it´s difficult to mock. The solution is to Mock an underlying `HttpMessageHandler` that is used within a `HttpClient` for the API communications (requests and responses).
+
+
 
 # Tradicional Solution
 
@@ -102,9 +107,74 @@ httpMessageHandkerMock.MarkDisposeAsVerifiable();
 
 With the extension method `SetupHttpClientFactory`, you can configure the customized `Mock<HttpMessageHandler>` to be used when the injected `Mock<IHttpClientFactory>()` is called inside an unit test. And if the `HttpClient` is called on a disposable way, the extension method `MarkDisposeAsVerifiable` can be used to verify if the `HttpClient` is, in fact, being disposable. You simply do not need to worry anymore about a `HttpClient`, all the configurations are applying to the Mock<IHttpClientFactory>()`. But how?
 
-You need to mock and
+For example, if you need to mock a request that always return the OK http status code, that's simple:
 
+```csharp
+MockRequestConfiguration
+    .New()
+    .BuildAt(httpMessageHandlerMock);
+```
 
+If you need to mock a request for a speficic address with a specific response (a bad request status code, for example), that's also simple:
 
+```csharp
+MockRequestConfiguration
+    .New()
+    .WithRequestAddress("http://www.site.com/")
+    .WithResponseStatusCode(HttpStatusCode.BadRequest)
+    .BuildAt(httpMessageHandlerMock);
+```
 
+But if you need to toe mocks for requests with different methods (a POST method and a GET method, for example), you need two configurations (please note that the configurations do not need to be applied in a specific order, using a [Fluent interface](https://en.wikipedia.org/wiki/Fluent_interface) inspired pattern):
+
+```csharp
+MockRequestConfiguration
+    .New()
+    .WithRequestMethod(HttpMethod.Post)
+    .WithResponseStatusCode(HttpStatusCode.BadRequest)
+    .WithRequestAddress("http://www.site.com/")    
+    .BuildAt(httpMessageHandlerMock);
+```
+
+```csharp
+MockRequestConfiguration
+    .New()    
+    .WithResponseStatusCode(HttpStatusCode.Accepted)    
+    .WithRequestAddress("http://www.site.com/")   
+    .WithRequestMethod(HttpMethod.Get)
+    .BuildAt(httpMessageHandlerMock);
+```
+
+But, what if you need to specify the request and response objects? That is also easy (please note that the request and response objects as today are automatically converted to and from JSON objects):
+
+```csharp
+public class DummyObjectRequest {}
+public class DummyObjectResponse {}
+
+MockRequestConfiguration<DummyObjectRequest, DummyObjectResponse>
+    .New()    
+    .WithResponseStatusCode(HttpStatusCode.Accepted)    
+    .WithRequestAddress("http://www.site.com/")   
+    .WithRequestMethod(HttpMethod.Get)
+    .BuildAt(httpMessageHandlerMock);
+```
+
+Finally, if you need to retrieve the original request and/or request content during a unit test... well, that's also easy:
+
+```csharp
+public class DummyObjectRequest {}
+public class DummyObjectResponse {}
+
+HttpRequestMessage requestMessage = null;
+DummyObjectRequest requestMessageContent = null;
+
+MockRequestConfiguration<DummyObjectRequest, DummyObjectResponse>
+    .New()
+    .RetrieveRequestMessageAt(r => requestMessage = r)
+    .RetrieveRequestMessageContentAt(r => requestMessageContent = r)
+    .WithRequestMethod(HttpMethod.Get)
+    .WithResponseStatusCode(HttpStatusCode.Accepted)    
+    .WithRequestAddress("http://www.site.com/")
+    .BuildAt(httpMessageHandlerMock);
+```
 

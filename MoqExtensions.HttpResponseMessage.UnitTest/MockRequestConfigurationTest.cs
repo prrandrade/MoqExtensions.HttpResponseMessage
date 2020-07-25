@@ -22,7 +22,7 @@
             var result = MockRequestConfiguration.New();
 
             // assert
-            Assert.IsType<MockRequestConfiguration<object,object>>(result);
+            Assert.IsType<MockRequestConfiguration<object, object>>(result);
         }
 
         [Fact]
@@ -248,18 +248,18 @@
 
             MockRequestConfiguration.New<DummyObject, DummyObject>()
                 .WithRequestAddress(requestAddress)
-                 .BuildAt(mock);
+                .BuildAt(mock);
 
             using var httpClient = new HttpClient(mock.Object);
 
             // act correct cases
             var response1 = await httpClient.PostAsync(requestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json"));
             var response2 = await httpClient.PutAsync(requestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json"));
-            
+
             // assert correct cases
             Assert.Equal(HttpStatusCode.OK, response1.StatusCode);
             Assert.Equal(HttpStatusCode.OK, response2.StatusCode);
-            
+
             // act incorrect cases
             var exception1 = await Record.ExceptionAsync(async () => await httpClient.PostAsync(otherRequestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json")));
             var exception2 = await Record.ExceptionAsync(async () => await httpClient.PutAsync(otherRequestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json")));

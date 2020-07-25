@@ -84,9 +84,13 @@
             if (ResponseContent != null)
             {
                 if (ResponseContent is string content)
+                {
                     response.Content = new StringContent(content);
+                }
                 else
+                {
                     response.Content = new StringContent(JsonSerializer.Serialize(ResponseContent));
+                }
             }
 
             mock.Protected()

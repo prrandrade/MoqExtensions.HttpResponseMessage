@@ -45,7 +45,7 @@
             Assert.IsType<MockRequestConfiguration<string, DummyObject>>(result);
         }
 
-
+        #region Request Method
         [Fact]
         public void WithRequestMethod()
         {
@@ -59,7 +59,9 @@
             // assert
             Assert.Equal(method, r.RequestMethod);
         }
+        #endregion
 
+        #region Request Address
         [Fact]
         public void WithRequestAddress()
         {
@@ -73,7 +75,9 @@
             // assert
             Assert.Equal(address, r.RequestUri.OriginalString);
         }
+        #endregion
 
+        #region Request Message
         [Fact]
         public void RetrieveRequestMessageAt()
         {
@@ -89,7 +93,9 @@
             // assert
             Assert.Equal(Action, r.OriginalRequestAction);
         }
+        #endregion
 
+        #region Request Message Content
         [Fact]
         public void RetrieveRequestMessageContentAt()
         {
@@ -105,7 +111,9 @@
             // assert
             Assert.Equal(Action, r.OriginalRequestContentAction);
         }
+        #endregion
 
+        #region Response StatusCode
         [Fact]
         public void WithResponseStatusCode()
         {
@@ -129,7 +137,9 @@
             // assert
             Assert.Equal(HttpStatusCode.OK, r.ResponseStatusCode);
         }
+        #endregion
 
+        #region Response Content
         [Fact]
         public void WithResponseContent_string()
         {
@@ -157,7 +167,9 @@
             // assert
             Assert.Equal(obj, r.ResponseContent);
         }
+        #endregion
 
+        #region BuildAt
         [Fact]
         public async void BuildAt_WithResponseMethod_WithRequestMethod_WithRequestUri()
         {
@@ -305,6 +317,7 @@
 
             // assert
             Assert.Equal(responseContent.DummyValue, JsonSerializer.Deserialize<DummyObject>(await response.Content.ReadAsStringAsync()).DummyValue);
-        }
+        } 
+        #endregion
     }
 }

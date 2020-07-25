@@ -1,4 +1,7 @@
-﻿v.1.5.0
+﻿v.1.6.0
+- Small code organization, without breaking changes
+
+v.1.5.0
 - Better documentation
 - Internal unit test correction
 

@@ -237,6 +237,7 @@
             var originalMessageContent = new DummyObject { DummyValue = 1 };
 
             MockRequestConfiguration.New<DummyObject, DummyObject>()
+                .WithRequestAddress(requestAddress)
                  .BuildAt(mock);
 
             using var httpClient = new HttpClient(mock.Object);
@@ -244,14 +245,18 @@
             // act correct cases
             var response1 = await httpClient.PostAsync(requestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json"));
             var response2 = await httpClient.PutAsync(requestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json"));
-            var response3 = await httpClient.PostAsync(otherRequestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json"));
-            var response4 = await httpClient.PutAsync(otherRequestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json"));
-
+            
             // assert correct cases
             Assert.Equal(HttpStatusCode.OK, response1.StatusCode);
             Assert.Equal(HttpStatusCode.OK, response2.StatusCode);
-            Assert.Equal(HttpStatusCode.OK, response3.StatusCode);
-            Assert.Equal(HttpStatusCode.OK, response4.StatusCode);
+            
+            // act incorrect cases
+            var exception1 = await Record.ExceptionAsync(async () => await httpClient.PostAsync(otherRequestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json")));
+            var exception2 = await Record.ExceptionAsync(async () => await httpClient.PutAsync(otherRequestAddress, new StringContent(JsonSerializer.Serialize(originalMessageContent), Encoding.UTF8, "application/json")));
+
+            // assert incorrect cases
+            Assert.IsType<InvalidOperationException>(exception1);
+            Assert.IsType<InvalidOperationException>(exception2);
         }
 
         [Fact]

@@ -10,17 +10,13 @@
     using Moq;
     using Moq.Protected;
 
-    public class MockRequestConfiguration
+    public static class MockRequestConfiguration
     {
-        public static MockRequestConfiguration<TReq, TResp> New<TReq, TResp>() where TReq : class where TResp : class
-        {
-            return new MockRequestConfiguration<TReq, TResp>();
-        }
+        public static MockRequestConfiguration<TReq, TResp> New<TReq, TResp>() where TReq : class where TResp : class => new MockRequestConfiguration<TReq, TResp>();
 
-        public static MockRequestConfiguration<TReq, object> New<TReq>() where TReq : class
-        {
-            return new MockRequestConfiguration<TReq, object>();
-        }
+        public static MockRequestConfiguration<TReq, object> New<TReq>() where TReq : class => new MockRequestConfiguration<TReq, object>();
+
+        public static MockRequestConfiguration<object, object> New() => new MockRequestConfiguration<object, object>();
     }
 
     public class MockRequestConfiguration<TReq, TResp> where TReq : class where TResp : class

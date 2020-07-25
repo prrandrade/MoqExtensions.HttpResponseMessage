@@ -13,8 +13,18 @@
         public int DummyValue { get; set; }
     }
 
-    public class MockRequestConfiguratorTest
+    public class MockRequestConfigurationTest
     {
+        [Fact]
+        public void CreatingNewConfiguration()
+        {
+            // act
+            var result = MockRequestConfiguration.New();
+
+            // assert
+            Assert.IsType<MockRequestConfiguration<object,object>>(result);
+        }
+
         [Fact]
         public void CreatingNewConfigurationWithRequest()
         {

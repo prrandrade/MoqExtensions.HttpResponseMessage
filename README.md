@@ -1,12 +1,19 @@
 # MoqExtensions.HttpResponseMessage
 
-### Introduction
+# Summary
+
+- [Introduction](#introduction)
+- [Problem](#problem)
+- [Tradicional Solution](#tradicional-solution)
+- [New Approach](#new-approach)
+
+# Introduction
 
 This project intends to facilitate the creation of mocked **HttpResponseMessage** objects given an already created **HttpMessageHandler** mocks using the **Moq** library. The objective here is to abstract the used logic when creating a **HttpResponseMessage** given a specific or generic **HttpRequestMessage**.
 
 Nuget package: https://www.nuget.org/packages/MoqExtensions.HttpResponseMessage/
 
-### Problem
+# Problem
 
 Consuming an API is something common today and a .NET Developer normally uses a HttpClient to achieve it. The problem happens when a Unit Test needs to be written, because of two problems:
 
@@ -26,11 +33,11 @@ Consuming an API is something common today and a .NET Developer normally uses a 
           // code continues
       }
   }
-  ```
+```
 
 - Even using an `IHttpClientFactory` to dynamically create a `HttpClient`, this object does not implement any interface, so it´s difficult to mock. The solution is to Mock an underlying `HttpMessageHandler` that is used within a `HttpClient` for the API communications (requests and responses).
 
-### Traditional solution
+# Tradicional Solution
 
 The ideal scenario can be imagined using a `HttpRequestMessage` to construct a request and passing this request for the `HttpClient`. Like this, for example:
 
@@ -78,62 +85,26 @@ httpClientFactoryMock
 	.Returns(httpClient);
 ```
 
-This approach works flawlessly, but imagine redoing all this logic for each unit test that covers an API request/response. The MoqExtensions.HttpResponseMessage project intend to simplify it.
+This approach works flawlessly, but imagine redoing all this logic for each unit test that covers an API request/response. The **MoqExtensions.HttpResponseMessage** project intend to simplify it.
 
 
 
-### MoqExtensions.HttpResponseMessage approach
+# New approach
 
-Given the fact that you will need two mocks, one for the `HttpMessageHandler` and one for the `IHttpClientFactory` (that will be injected), the same example can be rewritten like this:
+You still need two mocks, one for the `HttpMessageHandler` and one for the `IHttpClientFactory` (that will be injected). But the preparations for these mocks are way simpler:
 
 ```csharp
-var handlerMock = new Mock<HttpMessageHandler>(MockBehavior.Strict);
+var httpMessageHandlerMock = new Mock<HttpMessageHandler>();
 var httpClientFactoryMock = new Mock<IHttpClientFactory>();
-
-HttpRequestMessage request = null;
-handlerMock.SetupHttpResponseMessage(HttpStatusCode.OK), originalRequest => request = originalRequest);
-httpClientFactoryMock.SetupHttpClientFactory(handlerMock, "www.someaddress.com/api");
+httpClientFactoryMock.SetupHttpClientFactory(httpMessageHandlerMock);
+httpMessageHandkerMock.MarkDisposeAsVerifiable();
 ```
 
-First, we use the extension method `SetupHttpResponseMessage` to set up a request with no content in this case. The last parameter is an optional action with the sent request as a parameter so you can retrieve it for asserts, for example. Then we use the extension method `SetupHttpClientFactory` so the  `IHttpClientFactory` mock can return a `HttpClient` already configured to use the customized `HttpMessageHandler` mock. Way less work per unit test!
+With the extension method `SetupHttpClientFactory`, you can configure the customized `Mock<HttpMessageHandler>` to be used when the injected `Mock<IHttpClientFactory>()` is called inside an unit test. And if the `HttpClient` is called on a disposable way, the extension method `MarkDisposeAsVerifiable` can be used to verify if the `HttpClient` is, in fact, being disposable. You simply do not need to worry anymore about a `HttpClient`, all the configurations are applying to the Mock<IHttpClientFactory>()`. But how?
+
+You need to mock and
 
 
 
-### MoqExtensions.HttpResponseMessage methods
 
-For a `HttpMessageHandler` mock, the following extension methods are added using **MoqExtensions.HttpResponseMessage**:
-
-- `SetupHttpResponseMessage(Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
-- `SetupHttpResponseMessage(HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
-- `SetupHttpResponseMessage(HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
-- `SetupHttpResponseMessage(HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
-
-- `SetupHttpResponseMessage(HttpRequestMessage httpRequestMessage, Action<HttpRequestMessage> action = null, bool verifiableDispose = true, bool verifiableDispose = true)`
-- `SetupHttpResponseMessage(HttpRequestMessage httpRequestMessage, HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null, bool verifiableDispose = true, bool verifiableDispose = true)`
-- `SetupHttpResponseMessage(HttpRequestMessage httpRequestMessage, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true, bool verifiableDispose = true)`
-- `SetupHttpResponseMessage(HttpRequestMessage httpRequestMessage, HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
-
-- `SetupHttpResponseMessage(Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
-- `SetupHttpResponseMessage(Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpStatusCode responseStatusCode, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
-- `SetupHttpResponseMessage(Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
-- `SetupHttpResponseMessage(Expression<Func<HttpRequestMessage, bool>> httpRequestMessageExpression, HttpStatusCode responseStatusCode, HttpContent responseContent, Action<HttpRequestMessage> action = null, bool verifiableDispose = true)`
-
-- `HttpClient CreateHttpClientMock(string baseAddress)`
-
-  
-
-For a `IHttpClientFactory` mock, the following extensions methods are added using **MoqExtensions.HttpResponseMessage**:
-
-- `SetupHttpClientFactory(HttpClient httpClient)`
-- `HttpClient SetupHttpClientFactory(Mock<HttpMessageHandler> mockMessageHandler, string baseAddress)`
-
-- `void SetupHttpClientFactory(HttpClient httpClient, string httpClientName)`
-- `HttpClient SetupHttpClientFactory(Mock<HttpMessageHandler> mockMessageHandler, string baseAddress, string httpClientName)`
-
-
-### Next Steps
-
-- [X] Version 1.0.0 on Nuget 
-- [X] Add custom requests when creating a mock
-- [X] Add parameter for testing when a HttpClient is Disposable (parameter `verifiableDispose`)
 

@@ -12,6 +12,8 @@
     <RepositoryUrl>https://github.com/prrandrade/MoqExtensions.HttpResponseMessage</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>moq;mocks;unittesting;unittest;httpclient;httpclientfactory;httpmessagehandler;httprequestmessage;httpresponsemessage</PackageTags>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,15 +21,5 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.5" />
     <PackageReference Include="Moq" Version="4.14.5" />
   </ItemGroup>
-
-
-  <Target Name="PreparePackageReleaseNotesFromFile" AfterTargets="Build">
-    <ReadLinesFromFile File="ReleaseNotes.txt" >
-      <Output TaskParameter="Lines" ItemName="ReleaseNoteLines"/>
-    </ReadLinesFromFile>
-    <PropertyGroup>
-      <PackageReleaseNotes>@(ReleaseNoteLines, '%0a')</PackageReleaseNotes>
-    </PropertyGroup>
-  </Target>
 
 </Project>

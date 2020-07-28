@@ -7,7 +7,6 @@
     <PackageId>MoqExtensions.HttpResponseMessage</PackageId>
     <PackageDescription>Extension methods for easy unit tests with requests and responses.</PackageDescription>
     <Authors><![CDATA[Paulo Roberto Ramos de Andrade]]></Authors>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/prrandrade/MoqExtensions.HttpResponseMessage</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

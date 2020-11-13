@@ -20,7 +20,7 @@ Nuget package: https://www.nuget.org/packages/MoqExtensions.HttpResponseMessage/
 
 Consuming an API is something common today and a .NET Developer normally uses a HttpClient to achieve it. The problem happens when a Unit Test needs to be written, because of two problems:
 
-- The `HttpClient` commonly is created inside the method (or the class) that will consume an API. This approach creates an undesired dependency, which goes against the **Dependency Inversion Principle** (the last of the five S.O.L.I.D. principles). Fortunately, the .NET Core framework contains the `IHttpClientFactory` interface that can be injected and can be used to create a `HttpClient`.
+- The `HttpClient` commonly is created inside the method (or the class) that will consume an API. This approach creates an undesired dependency, which goes against the **Dependency Inversion Principle** (the last of the five S.O.L.I.D. principles). Fortunately, the .NET 5.0 framework contains the `IHttpClientFactory` interface that can be injected and can be used to create a `HttpClient`.
 
 ```csharp
 public class ExampleClass {

@@ -13,6 +13,7 @@
     <PackageTags>moq;mocks;unittesting;unittest;httpclient;httpclientfactory;httpmessagehandler;httprequestmessage;httpresponsemessage</PackageTags>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
